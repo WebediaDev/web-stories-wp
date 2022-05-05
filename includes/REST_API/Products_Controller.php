@@ -153,7 +153,7 @@ class Products_Controller extends REST_Controller implements HasRequirements {
 			default:
 				$response = rest_ensure_response( [] );
 		}
-		
+
 		return $response;
 	}
 
@@ -409,96 +409,42 @@ QUERY;
 		if ( $this->schema ) {
 			return $this->add_additional_fields_schema( $this->schema );
 		}
+		$file = WEBSTORIES_PLUGIN_DIR_PATH . 'includes/data/shopping/schema.json';
 
-		$schema = [
-			'$schema'    => 'http://json-schema.org/draft-04/schema#',
-			'title'      => 'publisher-logo',
-			'type'       => 'object',
-			'properties' => [
-				'productId'       => [
-					'description' => __( 'Product ID.', 'web-stories' ),
-					'type'        => 'integer',
-					'context'     => [ 'view', 'edit', 'embed' ],
-					'readonly'    => true,
-				],
-				'productTitle'    => [
-					'description' => __( 'Product title.', 'web-stories' ),
-					'type'        => 'string',
-					'context'     => [ 'view', 'edit', 'embed' ],
-					'readonly'    => true,
-				],
-				'productBrand'    => [
-					'description' => __( 'Product brand.', 'web-stories' ),
-					'type'        => 'string',
-					'context'     => [ 'view', 'edit', 'embed' ],
-					'readonly'    => true,
-				],
-				'productPrice'    => [
-					'description' => __( 'Product price.', 'web-stories' ),
-					'type'        => 'string',
-					'context'     => [ 'view', 'edit', 'embed' ],
-					'readonly'    => true,
-				],
-				'productCurrency' => [
-					'description' => __( 'Product currency.', 'web-stories' ),
-					'type'        => 'string',
-					'context'     => [ 'view', 'edit', 'embed' ],
-					'readonly'    => true,
-				],
-				'productImages'   => [
-					'description' => __( 'Product brand.', 'web-stories' ),
-					'type'        => 'array',
-					'items'       => [
-						'type'       => 'object',
-						'properties' => [
-							'url' => [
-								'description' => __( 'Product image URL', 'web-stories' ),
-								'type'        => 'string',
-								'context'     => [ 'view', 'edit', 'embed' ],
-							],
-							'alt' => [
-								'description' => __( 'Product image alt text', 'web-stories' ),
-								'type'        => 'string',
-								'format'      => 'uri',
-								'context'     => [ 'view', 'edit', 'embed' ],
-							],
-						],
-					],
-					'context'     => [ 'view', 'edit', 'embed' ],
-					'readonly'    => true,
-				],
-				'aggregateRating' => [
-					'description' => __( 'Product rating.', 'web-stories' ),
-					'type'        => 'object',
-					'properties'  => [
-						'ratingValue' => [
-							'description' => __( 'Average rating.', 'web-stories' ),
-							'type'        => 'number',
-							'context'     => [ 'view', 'edit', 'embed' ],
-						],
-						'reviewCount' => [
-							'description' => __( 'Number of reviews.', 'web-stories' ),
-							'type'        => 'number',
-							'context'     => [ 'view', 'edit', 'embed' ],
-						],
-						'reviewUrl'   => [
-							'description' => __( 'Product review URL.', 'web-stories' ),
-							'type'        => 'string',
-							'format'      => 'uri',
-							'context'     => [ 'view', 'edit', 'embed' ],
-						],
-					],
-					'context'     => [ 'view', 'edit', 'embed' ],
-					'readonly'    => true,
-				],
-				'productDetails'  => [
-					'description' => __( 'Product description.', 'web-stories' ),
-					'type'        => 'string',
-					'context'     => [ 'view', 'edit', 'embed' ],
-					'readonly'    => true,
-				],
-			],
-		];
+		if ( ! is_readable( $file ) ) {
+			return [];
+		}
+
+		$content = file_get_contents( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+
+		if ( ! $content ) {
+			return [];
+		}
+		$schema = json_decode( $content, true );
+		foreach ( $schema['properties'] as $name => $properties ) {
+			$schema['properties'][ $name ]['readonly'] = true;
+			$schema['properties'][ $name ]['context']  = [ 'view', 'edit', 'embed' ];
+			if ( isset( $schema['properties'][ $name ]['properties'] ) ) {
+				foreach ( $schema['properties'][ $name ]['properties'] as $prop_name => $prop_properties ) {
+					$schema['properties'][ $name ]['properties'][ $prop_name ]['readonly'] = true;
+					$schema['properties'][ $name ]['properties'][ $prop_name ]['context']  = [
+						'view',
+						'edit',
+						'embed'
+					];
+				}
+			}
+			if ( isset( $schema['properties'][ $name ]['items']['properties'] ) ) {
+				foreach ( $schema['properties'][ $name ]['items']['properties'] as $prop_name => $prop_properties ) {
+					$schema['properties'][ $name ]['items']['properties'][ $prop_name ]['readonly'] = true;
+					$schema['properties'][ $name ]['items']['properties'][ $prop_name ]['context']  = [
+						'view',
+						'edit',
+						'embed'
+					];
+				}
+			}
+		}
 
 		return $schema;
 	}
