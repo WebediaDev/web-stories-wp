@@ -27,6 +27,8 @@ import {
   TOOLTIP_PLACEMENT,
   themeHelpers,
   THEME_CONSTANTS,
+  ChevronWrap,
+  StyledChevron,
 } from '@googleforcreators/design-system';
 import { forwardRef } from '@googleforcreators/react';
 
@@ -85,6 +87,16 @@ const NotificationCount = styled(Text).attrs({ as: 'span' })`
   padding-right: 6px;
   line-height: 20px;
   color: ${({ theme }) => theme.colors.violet[20]};
+  ${({ hasBadgeNotificationStyle, theme }) =>
+    hasBadgeNotificationStyle &&
+    css`
+      border-radius: ${theme.borders.radius.round};
+      color: ${theme.colors.fg.primary};
+      background-color: ${theme.colors.inverted.fg.tertiary};
+      height: 20px;
+      width: 20px;
+      margin-left: 10px;
+    `}
 `;
 
 export const ToggleButton = forwardRef(
@@ -97,6 +109,8 @@ export const ToggleButton = forwardRef(
       label,
       shortcut,
       popupZIndexOverride,
+      hasChevron = false,
+      hasBadgeNotificationStyle = false,
       ...rest
     },
     ref
@@ -128,7 +142,16 @@ export const ToggleButton = forwardRef(
             {MainIcon && <MainIcon />}
             {copy}
             {hasNotifications && (
-              <NotificationCount>{notificationCount}</NotificationCount>
+              <NotificationCount
+                hasBadgeNotificationStyle={hasBadgeNotificationStyle}
+              >
+                {notificationCount}
+              </NotificationCount>
+            )}
+            {hasChevron && (
+              <ChevronWrap isOpen={isOpen}>
+                <StyledChevron />
+              </ChevronWrap>
             )}
           </Wrapper>
         </Button>
@@ -147,4 +170,6 @@ ToggleButton.propTypes = {
   notificationCount: PropTypes.number,
   shortcut: PropTypes.string,
   popupZIndexOverride: PropTypes.number,
+  hasChevron: PropTypes.bool,
+  hasBadgeNotificationStyle: PropTypes.bool,
 };

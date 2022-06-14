@@ -69,6 +69,8 @@ function Layers() {
       </Popup>
       <ToggleButton
         isOpen={isOpen}
+        hasChevron
+        hasBadgeNotificationStyle
         notificationCount={layersLength}
         copy={__('Layers', 'web-stories')}
         onClick={() => setIsOpen((state) => !state)}

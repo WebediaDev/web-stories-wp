@@ -19,7 +19,12 @@ export * from './checkbox';
 export * from './contextMenu';
 export { Chip } from './chip';
 export { Dialog } from './dialog';
-export { DropDown, DropDownSelect } from './dropDown';
+export {
+  DropDown,
+  DropDownSelect,
+  StyledChevron,
+  ChevronWrap,
+} from './dropDown';
 export { HexInput } from './hex';
 export { Input, BaseInput } from './input';
 export { LoadingBar, LOADING_INDICATOR_CLASS } from './loadingBar';

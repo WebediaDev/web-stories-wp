@@ -35,9 +35,10 @@ import { Menu, MENU_OPTIONS } from '../menu';
 import { Popup, PLACEMENT } from '../popup';
 import { DropDownContainer, Hint } from './components';
 import DropDownSelect from './select';
+import { StyledChevron, ChevronWrap } from './select/components.js';
 import useDropDown from './useDropDown';
 
-export { DropDownSelect };
+export { DropDownSelect, StyledChevron, ChevronWrap };
 
 /**
  *
