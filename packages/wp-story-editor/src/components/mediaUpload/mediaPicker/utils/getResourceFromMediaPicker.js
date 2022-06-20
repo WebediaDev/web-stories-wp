@@ -46,11 +46,12 @@ const getResourceFromMediaPicker = (mediaPickerEl) => {
       height,
       length,
       length_formatted: lengthFormatted,
+      dominant_color: rawBaseColor,
       sizes: _sizes = {},
     } = {},
     web_stories_media_source: mediaSource,
     web_stories_is_muted: isMuted,
-    web_stories_base_color: baseColor,
+    web_stories_base_color: webStoriesBaseColor,
     web_stories_blurhash: blurHash,
     trim_data: trimData,
   } = mediaPickerEl;
@@ -59,6 +60,8 @@ const getResourceFromMediaPicker = (mediaPickerEl) => {
     sizes[key] = snakeToCamelCaseObjectKeys(value);
     return sizes;
   }, {});
+
+  const baseColor = rawBaseColor ? `#${rawBaseColor}` : webStoriesBaseColor;
 
   return createResource({
     baseColor,

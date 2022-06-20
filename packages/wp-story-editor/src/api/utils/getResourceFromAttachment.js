@@ -52,17 +52,27 @@ function getImageResourceFromAttachment(attachment) {
   const {
     id,
     date_gmt,
-    media_details: { width, height, sizes: _sizes = {} } = {},
+    media_details: {
+      width,
+      height,
+      sizes: _sizes = {},
+      dominant_color: rawBaseColor,
+    } = {},
     mime_type: mimeType,
     alt_text: alt,
     source_url: src,
-    meta: { web_stories_base_color: baseColor, web_stories_blurhash: blurHash },
+    meta: {
+      web_stories_base_color: webStoriesBaseColor,
+      web_stories_blurhash: blurHash,
+    },
   } = attachment;
 
   const sizes = Object.entries(_sizes).reduce((sizes, [key, value]) => {
     sizes[key] = snakeToCamelCaseObjectKeys(value);
     return sizes;
   }, {});
+
+  const baseColor = rawBaseColor ? `#${rawBaseColor}` : webStoriesBaseColor;
 
   return createResource({
     baseColor,
