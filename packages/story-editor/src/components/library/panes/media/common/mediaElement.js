@@ -99,8 +99,10 @@ function Element({
 
   const oRatio =
     originalWidth && originalHeight ? originalWidth / originalHeight : 1;
-  const width = requestedWidth || requestedHeight / oRatio;
-  const height = requestedHeight || width / oRatio;
+  const widthCal = requestedWidth || requestedHeight / oRatio;
+  const heightCal = requestedHeight || widthCal / oRatio;
+  const height = parseInt(heightCal);
+  const width = parseInt(widthCal);
 
   const mediaElement = useRef();
   const [showVideoDetail, setShowVideoDetail] = useState(true);
@@ -214,6 +216,8 @@ function Element({
             hash={blurHash}
             width={width}
             height={height}
+            resolutionX={width}
+            resolutionY={height}
             punch={1}
           />
         )}
