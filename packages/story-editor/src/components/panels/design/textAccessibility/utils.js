@@ -13,8 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ * Internal dependencies
+ */
 
-export { default as OutputStory } from './story';
-export { default as getStoryMarkup } from './utils/getStoryMarkup';
-export { default as getTextElementTagNames } from './utils/getTextElementTagNames';
-export * from './constants';
+/**
+ * Takes all elements and all tags and combines
+ * the elements with their associated tag
+ * while retaining existing properties on the elements.
+ *
+ * @param {Array<Object>} elements - story element.
+ * @param {Map} tagMap - Map of all tags
+ * @return {Object} element.padding with hidden padding properties applied
+ */
+
+export function combineElementsWithTags(textElements, tagNamesMap) {
+  return textElements.map((element) => {
+    const newElement = { ...element };
+    newElement.tagName = tagNamesMap.get(element.id);
+    return newElement;
+  });
+}
