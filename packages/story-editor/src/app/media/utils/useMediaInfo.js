@@ -16,6 +16,7 @@
 /**
  * External dependencies
  */
+import { getVideoLengthDisplay } from '@googleforcreators/media';
 import { useCallback, useMemo } from '@googleforcreators/react';
 import {
   getTimeTracker,
@@ -218,18 +219,18 @@ function useMediaInfo() {
     async (resource, file) => {
       // This should never happen, but just in case.
       if (resource.isOptimized) {
-        return true;
+        return resource;
       }
 
       // Short-circuit for non-matching mime types.
       if (!MEDIA_MIME_TYPES_OPTIMIZED_VIDEOS.includes(resource.mimeType)) {
-        return false;
+        return resource;
       }
 
       // Placeholders are the size of the canvas, so account for that when
       // checking the dimensions.
       if (!resource.isPlaceholder && !hasSmallDimensions(resource)) {
-        return false;
+        return resource;
       }
 
       if (
@@ -237,13 +238,13 @@ function useMediaInfo() {
         resource.length &&
         !hasSmallFileSize(file.size, resource.length)
       ) {
-        return false;
+        return resource;
       }
 
       const fileInfo = await getFileInfo(file);
 
       if (!fileInfo) {
-        return false;
+        return resource;
       }
 
       // AVC is H.264.
@@ -261,6 +262,14 @@ function useMediaInfo() {
         isSupportedMp4 &&
         hasHighFps;
 
+      resource.height = fileInfo.height;
+      resource.width = fileInfo.width;
+      resource.isMuted = fileInfo.isMuted;
+
+      resource.length = Math.round(fileInfo.duration);
+      resource.lengthFormatted = getVideoLengthDisplay(length);
+      resource.isOptimized = result;
+
       trackEvent('mediainfo_is_optimized', {
         result,
         file_size: fileInfo.fileSize,
@@ -270,7 +279,7 @@ function useMediaInfo() {
         duration: fileInfo.duration,
       });
 
-      return result;
+      return resource;
     },
     [getFileInfo]
   );

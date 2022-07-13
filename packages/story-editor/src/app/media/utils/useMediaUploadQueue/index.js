@@ -458,10 +458,10 @@ function useMediaUploadQueue() {
 
         if (isVideo) {
           // TODO: Consider always using getFileInfo() to have more accurate audio information.
-
+          const newResource = await isConsideredOptimized(resource, file);
           if (
             item.additionalData.mediaSource !== 'recording' &&
-            (await isConsideredOptimized(resource, file))
+            newResource.isOptimized
           ) {
             // Do not override pre-existing mediaSource if provided,
             // for example by media recording.

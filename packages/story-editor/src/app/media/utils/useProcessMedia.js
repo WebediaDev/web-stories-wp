@@ -193,7 +193,8 @@ function useProcessMedia({
 
         // Video meets criteria to be considered optimized,
         // just mark it as such and call it a day.
-        if (await isConsideredOptimized(oldResource, file)) {
+        const newResource = await isConsideredOptimized(oldResource, file);
+        if (newResource.isOptimized) {
           updateExistingElementsByResourceId(resourceId, { isOptimized: true });
           updateMedia(resourceId, {
             mediaSource: 'video-optimization',
