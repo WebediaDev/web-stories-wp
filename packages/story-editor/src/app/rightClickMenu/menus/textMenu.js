@@ -64,29 +64,35 @@ function TextMenu({ parentMenuRef }) {
   } = useLayerActions();
   const { handleAddColorPreset, handleAddTextPreset } = usePresetActions();
 
-  const subMenuRef = useRef();
+  const layerSubMenuRef = useRef();
   const { menuPosition, onCloseMenu } = useRightClickMenu();
   const layerSelectProps = useLayerSelect({
     menuPosition,
     isMenuOpen: true,
   });
 
-  const { closeSubMenu, isSubMenuOpen, subMenuItems, ...subMenuTriggerProps } =
-    layerSelectProps || {};
+  const {
+    openSubMenu: openLayerSubMenu,
+    closeSubMenu: closeLayerSubMenu,
+    isSubMenuOpen: isLayerSubMenuOpen,
+    subMenuItems: layerSubMenuItems,
+    ...layerSubMenuTriggerProps
+  } = layerSelectProps || {};
 
   return (
     <>
       {layerSelectProps && (
         <>
           <ContextMenuComponents.SubMenuTrigger
-            closeSubMenu={closeSubMenu}
+            openSubMenu={openLayerSubMenu}
+            closeSubMenu={closeLayerSubMenu}
             parentMenuRef={parentMenuRef}
-            subMenuRef={subMenuRef}
-            isSubMenuOpen={isSubMenuOpen}
-            {...subMenuTriggerProps}
+            subMenuRef={layerSubMenuRef}
+            isSubMenuOpen={isLayerSubMenuOpen}
+            {...layerSubMenuTriggerProps}
           />
           <SubMenuContainer
-            ref={subMenuRef}
+            ref={layerSubMenuRef}
             position={{
               x:
                 (parentMenuRef.current.firstChild?.offsetWidth ||
@@ -96,13 +102,13 @@ function TextMenu({ parentMenuRef }) {
           >
             <ContextMenu
               onDismiss={onCloseMenu}
-              isOpen={isSubMenuOpen}
-              onCloseSubMenu={closeSubMenu}
+              isOpen={isLayerSubMenuOpen}
+              onCloseSubMenu={closeLayerSubMenu}
               aria-label={SUB_MENU_ARIA_LABEL}
               isSubMenu
               parentMenuRef={parentMenuRef}
             >
-              {subMenuItems.map(({ key, ...menuItemProps }) => (
+              {layerSubMenuItems.map(({ key, ...menuItemProps }) => (
                 <ContextMenuComponents.MenuItem key={key} {...menuItemProps} />
               ))}
             </ContextMenu>
