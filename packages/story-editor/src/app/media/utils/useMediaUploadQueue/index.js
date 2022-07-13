@@ -455,10 +455,10 @@ function useMediaUploadQueue() {
         prepareItem({ id });
 
         const isVideo = file.type.startsWith('video/');
-
+        let newResource = resource;
         if (isVideo) {
           // TODO: Consider always using getFileInfo() to have more accurate audio information.
-          const newResource = await isConsideredOptimized(resource, file);
+          newResource = await isConsideredOptimized(resource, file);
           if (
             item.additionalData.mediaSource !== 'recording' &&
             newResource.isOptimized
@@ -489,7 +489,7 @@ function useMediaUploadQueue() {
           return;
         }
 
-        prepareForTranscoding({ id });
+        prepareForTranscoding({ id, resource: newResource });
       }
     );
   }, [

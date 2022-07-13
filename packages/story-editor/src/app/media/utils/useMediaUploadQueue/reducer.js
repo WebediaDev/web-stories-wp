@@ -151,15 +151,17 @@ export function prepareItem(state, { payload: { id } }) {
  * @param {Object} action Action object.
  * @param {Object} action.payload Action payload.
  * @param {string} action.payload.id Item ID.
+ * @param action.payload.resource
  * @return {Object} New state
  */
-export function prepareForTranscoding(state, { payload: { id } }) {
+export function prepareForTranscoding(state, { payload: { id, resource } }) {
   return {
     ...state,
     queue: state.queue.map((item) =>
       item.id === id
         ? {
             ...item,
+            resource,
             state: ITEM_STATUS.PENDING_TRANSCODING,
           }
         : item

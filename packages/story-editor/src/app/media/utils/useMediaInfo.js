@@ -262,13 +262,17 @@ function useMediaInfo() {
         isSupportedMp4 &&
         hasHighFps;
 
-      resource.height = fileInfo.height;
-      resource.width = fileInfo.width;
-      resource.isMuted = fileInfo.isMuted;
-
-      resource.length = Math.round(fileInfo.duration);
-      resource.lengthFormatted = getVideoLengthDisplay(length);
-      resource.isOptimized = result;
+      const newResource = {
+        ...resource,
+        height: fileInfo?.height,
+        width: fileInfo?.width,
+        isMuted: fileInfo?.isMuted,
+        isOptimized: result,
+      };
+      if (fileInfo.duration) {
+        newResource.length = Math.round(fileInfo.duration);
+        newResource.lengthFormatted = getVideoLengthDisplay(newResource.length);
+      }
 
       trackEvent('mediainfo_is_optimized', {
         result,
@@ -279,7 +283,7 @@ function useMediaInfo() {
         duration: fileInfo.duration,
       });
 
-      return resource;
+      return newResource;
     },
     [getFileInfo]
   );
