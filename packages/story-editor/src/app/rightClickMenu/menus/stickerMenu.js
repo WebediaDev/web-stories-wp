@@ -34,12 +34,7 @@ import { useElementActions, useLayerActions } from '../hooks';
 import useLayerSelect from '../useLayerSelect';
 import { LayerLock, LayerName, LayerUngroup } from '../items';
 import useRightClickMenu from '../useRightClickMenu';
-import {
-  DEFAULT_DISPLACEMENT,
-  MenuPropType,
-  SubMenuContainer,
-  SUB_MENU_ARIA_LABEL,
-} from './shared';
+import { DEFAULT_DISPLACEMENT, MenuPropType, SubMenuContainer } from './shared';
 
 function StickerMenu({ parentMenuRef }) {
   const { handleDuplicateSelectedElements } = useElementActions();
@@ -86,7 +81,7 @@ function StickerMenu({ parentMenuRef }) {
               onDismiss={onCloseMenu}
               isOpen={isSubMenuOpen}
               onCloseSubMenu={closeSubMenu}
-              aria-label={SUB_MENU_ARIA_LABEL}
+              aria-label={RIGHT_CLICK_MENU_LABELS.SELECT_LAYER}
               isSubMenu
               parentMenuRef={parentMenuRef}
             >

@@ -30,6 +30,7 @@ export const RIGHT_CLICK_MENU_LABELS = {
   ADD_NEW_PAGE_BEFORE: __('Add New Page Before', 'web-stories'),
   ADD_TO_COLOR_PRESETS: __('Add Color to “Saved Colors”', 'web-stories'),
   ADD_TO_TEXT_PRESETS: __('Add Style to “Saved Styles”', 'web-stories'),
+  TEXT_HEADING_LEVEL: __('Heading Level', 'web-stories'),
   BRING_FORWARD: __('Bring Forward', 'web-stories'),
   BRING_TO_FRONT: __('Bring to Front', 'web-stories'),
   BROWSE_STOCK_IMAGES_AND_VIDEO: __(
@@ -57,6 +58,7 @@ export const RIGHT_CLICK_MENU_LABELS = {
   DUPLICATE_PAGE: __('Duplicate Page', 'web-stories'),
   DUPLICATE_ELEMENTS: (numElements = 1) =>
     _n('Duplicate Element', 'Duplicate Elements', numElements, 'web-stories'),
+  SELECT_LAYER: __('Select Layer', 'web-stories'),
   GROUP_LAYERS: __('Group Layers', 'web-stories'),
   UNGROUP_LAYERS: __('Ungroup Layers', 'web-stories'),
   UNGROUP_LAYER: __('Remove from Group', 'web-stories'),

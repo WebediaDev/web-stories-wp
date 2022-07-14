@@ -22,11 +22,10 @@
  * the elements with their associated tag
  * while retaining existing properties on the elements.
  *
- * @param {Array<Object>} elements - story element.
- * @param {Map} tagMap - Map of all tags
- * @return {Object} element.padding with hidden padding properties applied
+ * @param {Array<Object>} textElements - story element.
+ * @param {Map} tagNamesMap - Map of all tags
+ * @return {Object} Updated element object with tagName property
  */
-
 export function combineElementsWithTags(textElements, tagNamesMap) {
   return textElements.map((element) => {
     const newElement = { ...element };

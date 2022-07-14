@@ -40,12 +40,7 @@ import useLayerSelect from '../useLayerSelect';
 import { LayerLock, LayerName, LayerUngroup } from '../items';
 import { useStory } from '../..';
 import useRightClickMenu from '../useRightClickMenu';
-import {
-  DEFAULT_DISPLACEMENT,
-  MenuPropType,
-  SubMenuContainer,
-  SUB_MENU_ARIA_LABEL,
-} from './shared';
+import { DEFAULT_DISPLACEMENT, MenuPropType, SubMenuContainer } from './shared';
 
 function TextMenu({ parentMenuRef }) {
   const { copiedElementType, selectedElementType } = useStory(({ state }) => ({
@@ -67,10 +62,12 @@ function TextMenu({ parentMenuRef }) {
   const layerSubMenuRef = useRef();
   const { menuPosition, onCloseMenu } = useRightClickMenu();
   const layerSelectProps = useLayerSelect({
+    label: RIGHT_CLICK_MENU_LABELS.SELECT_LAYER,
     menuPosition,
     isMenuOpen: true,
   });
 
+  // Remap property names for layer menu
   const {
     openSubMenu: openLayerSubMenu,
     closeSubMenu: closeLayerSubMenu,
@@ -104,7 +101,7 @@ function TextMenu({ parentMenuRef }) {
               onDismiss={onCloseMenu}
               isOpen={isLayerSubMenuOpen}
               onCloseSubMenu={closeLayerSubMenu}
-              aria-label={SUB_MENU_ARIA_LABEL}
+              aria-label={RIGHT_CLICK_MENU_LABELS.SELECT_LAYER}
               isSubMenu
               parentMenuRef={parentMenuRef}
             >

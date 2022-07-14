@@ -17,7 +17,7 @@
 /**
  * External dependencies
  */
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import PropTypes from 'prop-types';
 import { forwardRef } from '@googleforcreators/react';
 
@@ -31,20 +31,20 @@ import Suffix from './suffix';
 const StyledButton = styled(Button)`
   ${({ supportsIcon }) =>
     supportsIcon &&
-    `
-    svg {
-      width: 32px;
-      position: absolute;
-      margin-left: -12px;
-    }
-    span {
-      padding-left: 18px;
-      font-size: 12px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  `}
+    css`
+      svg {
+        width: 32px;
+        position: absolute;
+        margin-left: -12px;
+      }
+      span {
+        padding-left: 18px;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    `}
 `;
 
 function MenuItemWithRef(

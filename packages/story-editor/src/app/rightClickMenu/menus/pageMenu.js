@@ -32,12 +32,7 @@ import { useElementActions, usePageActions } from '../hooks';
 import { useStory, useLocalMedia } from '../..';
 import useRightClickMenu from '../useRightClickMenu';
 import useLayerSelect from '../useLayerSelect';
-import {
-  DEFAULT_DISPLACEMENT,
-  MenuPropType,
-  SubMenuContainer,
-  SUB_MENU_ARIA_LABEL,
-} from './shared';
+import { DEFAULT_DISPLACEMENT, MenuPropType, SubMenuContainer } from './shared';
 
 function PageMenu({ parentMenuRef }) {
   const { currentPageIndex, canDeletePage, selectedElement } = useStory(
@@ -107,7 +102,7 @@ function PageMenu({ parentMenuRef }) {
               onDismiss={onCloseMenu}
               isOpen={isSubMenuOpen}
               onCloseSubMenu={closeSubMenu}
-              aria-label={SUB_MENU_ARIA_LABEL}
+              aria-label={RIGHT_CLICK_MENU_LABELS.SELECT_LAYER}
               isSubMenu
               parentMenuRef={parentMenuRef}
             >
