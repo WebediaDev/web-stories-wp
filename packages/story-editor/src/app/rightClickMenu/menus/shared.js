@@ -17,9 +17,11 @@
 /**
  * External dependencies
  */
-import { __ } from '@googleforcreators/i18n';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+// Should this be the same as the default menu width?
+export const DEFAULT_DISPLACEMENT = 210;
 
 export const SubMenuContainer = styled.div`
   position: absolute;
@@ -27,13 +29,10 @@ export const SubMenuContainer = styled.div`
   left: ${({ position }) => position?.x ?? 0}px;
   z-index: 9999;
 `;
+
 SubMenuContainer.propTypes = {
   position: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
 };
-
-export const DEFAULT_DISPLACEMENT = 210;
-
-export const SUB_MENU_ARIA_LABEL = __('Select a layer', 'web-stories');
 
 export const MenuPropType = {
   parentMenuRef: PropTypes.oneOfType([

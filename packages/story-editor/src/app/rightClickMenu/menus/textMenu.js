@@ -22,6 +22,7 @@ import {
   ContextMenuComponents,
 } from '@googleforcreators/design-system';
 import { useRef } from '@googleforcreators/react';
+import styled from 'styled-components';
 
 /**
  * Internal dependencies
@@ -42,6 +43,19 @@ import { useStory } from '../..';
 import useRightClickMenu from '../useRightClickMenu';
 import { DEFAULT_DISPLACEMENT, MenuPropType, SubMenuContainer } from './shared';
 
+// This is used for positioning the submenus. The way any submenus
+// are positioned elsewhere in the app depend on the main menu that
+// contains the submenu. This is problematic when there is more than
+// just one menu item at the top of the main menu with a submenu (as
+// is the case with the 'Heading Level' submenu. Something to consider
+// would be to refactor the menu/submenu components to include the
+// 'outer' container (and 'trigger' button so the submenu can be positioned
+// properly no matter where its parent menu item is located.
+const SubMenuOuterContainer = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
 function TextMenu({ parentMenuRef }) {
   const { copiedElementType, selectedElementType } = useStory(({ state }) => ({
     copiedElementType: state.copiedElementState.type,
@@ -59,15 +73,18 @@ function TextMenu({ parentMenuRef }) {
   } = useLayerActions();
   const { handleAddColorPreset, handleAddTextPreset } = usePresetActions();
 
+  const layerSubMenuOuterRef = useRef();
   const layerSubMenuRef = useRef();
+
   const { menuPosition, onCloseMenu } = useRightClickMenu();
+
   const layerSelectProps = useLayerSelect({
     label: RIGHT_CLICK_MENU_LABELS.SELECT_LAYER,
     menuPosition,
     isMenuOpen: true,
   });
 
-  // Remap property names for layer menu
+  // Remap property names for use with ONLY layer menu
   const {
     openSubMenu: openLayerSubMenu,
     closeSubMenu: closeLayerSubMenu,
@@ -80,36 +97,43 @@ function TextMenu({ parentMenuRef }) {
     <>
       {layerSelectProps && (
         <>
-          <ContextMenuComponents.SubMenuTrigger
-            openSubMenu={openLayerSubMenu}
-            closeSubMenu={closeLayerSubMenu}
-            parentMenuRef={parentMenuRef}
-            subMenuRef={layerSubMenuRef}
-            isSubMenuOpen={isLayerSubMenuOpen}
-            {...layerSubMenuTriggerProps}
-          />
-          <SubMenuContainer
-            ref={layerSubMenuRef}
-            position={{
-              x:
-                (parentMenuRef.current.firstChild?.offsetWidth ||
-                  DEFAULT_DISPLACEMENT) + 2,
-              y: 0,
-            }}
-          >
-            <ContextMenu
-              onDismiss={onCloseMenu}
-              isOpen={isLayerSubMenuOpen}
-              onCloseSubMenu={closeLayerSubMenu}
-              aria-label={RIGHT_CLICK_MENU_LABELS.SELECT_LAYER}
-              isSubMenu
+          <SubMenuOuterContainer ref={layerSubMenuOuterRef}>
+            <ContextMenuComponents.SubMenuTrigger
+              openSubMenu={openLayerSubMenu}
+              closeSubMenu={closeLayerSubMenu}
+              isSubMenuOpen={isLayerSubMenuOpen}
               parentMenuRef={parentMenuRef}
+              subMenuRef={layerSubMenuRef}
+              style={{ width: '100%' }}
+              {...layerSubMenuTriggerProps}
+            />
+            <SubMenuContainer
+              ref={layerSubMenuRef}
+              className="submenu-container"
+              position={{
+                x:
+                  (layerSubMenuOuterRef?.current?.offsetWidth ||
+                    DEFAULT_DISPLACEMENT) + 4,
+                y: -8,
+              }}
             >
-              {layerSubMenuItems.map(({ key, ...menuItemProps }) => (
-                <ContextMenuComponents.MenuItem key={key} {...menuItemProps} />
-              ))}
-            </ContextMenu>
-          </SubMenuContainer>
+              <ContextMenu
+                onDismiss={onCloseMenu}
+                isOpen={isLayerSubMenuOpen}
+                onCloseSubMenu={closeLayerSubMenu}
+                aria-label={RIGHT_CLICK_MENU_LABELS.SELECT_LAYER}
+                isSubMenu
+                parentMenuRef={parentMenuRef}
+              >
+                {layerSubMenuItems.map(({ key, ...menuItemProps }) => (
+                  <ContextMenuComponents.MenuItem
+                    key={key}
+                    {...menuItemProps}
+                  />
+                ))}
+              </ContextMenu>
+            </SubMenuContainer>
+          </SubMenuOuterContainer>
           <ContextMenuComponents.MenuSeparator />
         </>
       )}
@@ -131,6 +155,7 @@ function TextMenu({ parentMenuRef }) {
           {RIGHT_CLICK_MENU_SHORTCUTS.SEND_BACKWARD.display}
         </ContextMenuComponents.MenuShortcut>
       </ContextMenuComponents.MenuButton>
+
       <ContextMenuComponents.MenuButton
         disabled={!canElementMoveBackwards}
         onClick={handleSendToBack}
@@ -140,6 +165,7 @@ function TextMenu({ parentMenuRef }) {
           {RIGHT_CLICK_MENU_SHORTCUTS.SEND_TO_BACK.display}
         </ContextMenuComponents.MenuShortcut>
       </ContextMenuComponents.MenuButton>
+
       <ContextMenuComponents.MenuButton
         disabled={!canElementMoveForwards}
         onClick={handleBringForward}
@@ -149,6 +175,7 @@ function TextMenu({ parentMenuRef }) {
           {RIGHT_CLICK_MENU_SHORTCUTS.BRING_FORWARD.display}
         </ContextMenuComponents.MenuShortcut>
       </ContextMenuComponents.MenuButton>
+
       <ContextMenuComponents.MenuButton
         disabled={!canElementMoveForwards}
         onClick={handleBringToFront}
@@ -171,6 +198,7 @@ function TextMenu({ parentMenuRef }) {
           {RIGHT_CLICK_MENU_SHORTCUTS.COPY_STYLES.display}
         </ContextMenuComponents.MenuShortcut>
       </ContextMenuComponents.MenuButton>
+
       <ContextMenuComponents.MenuButton
         disabled={copiedElementType !== selectedElementType}
         onClick={handlePasteStyles}
@@ -180,9 +208,11 @@ function TextMenu({ parentMenuRef }) {
           {RIGHT_CLICK_MENU_SHORTCUTS.PASTE_STYLES.display}
         </ContextMenuComponents.MenuShortcut>
       </ContextMenuComponents.MenuButton>
+
       <ContextMenuComponents.MenuButton onClick={handleAddTextPreset}>
         {RIGHT_CLICK_MENU_LABELS.ADD_TO_TEXT_PRESETS}
       </ContextMenuComponents.MenuButton>
+
       <ContextMenuComponents.MenuButton onClick={handleAddColorPreset}>
         {RIGHT_CLICK_MENU_LABELS.ADD_TO_COLOR_PRESETS}
       </ContextMenuComponents.MenuButton>

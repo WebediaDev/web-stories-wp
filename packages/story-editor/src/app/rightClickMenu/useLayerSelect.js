@@ -24,7 +24,6 @@ import {
   useState,
 } from '@googleforcreators/react';
 import SAT from 'sat';
-import { __ } from '@googleforcreators/i18n';
 import { Icons } from '@googleforcreators/design-system';
 import { trackEvent } from '@googleforcreators/tracking';
 import styled from 'styled-components';
@@ -37,6 +36,7 @@ import { useUnits } from '@googleforcreators/units';
 import useStory from '../story/useStory';
 import { useCanvas } from '../canvas';
 import { useConfig } from '../config';
+import { RIGHT_CLICK_MENU_LABELS } from './constants';
 
 const ReversedIcon = styled(Icons.ChevronRightSmall)`
   transform: rotate(180deg);
@@ -163,7 +163,7 @@ function useLayerSelect({ menuItemProps, menuPosition, isMenuOpen }) {
   // Only display if submenu has any items.
   return subMenuItems.length > 0
     ? {
-        label: __('Select Layer', 'web-stories'),
+        label: RIGHT_CLICK_MENU_LABELS.SELECT_LAYER,
         openSubMenu: () => setIsSubMenuOpen(true),
         closeSubMenu: () => setIsSubMenuOpen(false),
         isSubMenuOpen,
