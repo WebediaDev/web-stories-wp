@@ -20,8 +20,9 @@
 import {
   ContextMenu,
   ContextMenuComponents,
+  Icons,
 } from '@googleforcreators/design-system';
-import { useRef } from '@googleforcreators/react';
+import { useRef, useState } from '@googleforcreators/react';
 import styled from 'styled-components';
 
 /**
@@ -39,9 +40,14 @@ import {
 } from '../hooks';
 import useLayerSelect from '../useLayerSelect';
 import { LayerLock, LayerName, LayerUngroup } from '../items';
-import { useStory } from '../..';
+import { useConfig, useStory } from '../..';
 import useRightClickMenu from '../useRightClickMenu';
 import { DEFAULT_DISPLACEMENT, MenuPropType, SubMenuContainer } from './shared';
+
+// Is there no 'ChevronLefSmall' icon? 🤔
+const ChevronLeftSmall = styled(Icons.ChevronRightSmall)`
+  transform: rotate(180deg);
+`;
 
 // This is used for positioning the submenus. The way any submenus
 // are positioned elsewhere in the app depend on the main menu that
@@ -57,6 +63,7 @@ const SubMenuOuterContainer = styled.div`
 `;
 
 function TextMenu({ parentMenuRef }) {
+  const { isRTL } = useConfig();
   const { copiedElementType, selectedElementType } = useStory(({ state }) => ({
     copiedElementType: state.copiedElementState.type,
     selectedElementType: state.selectedElements?.[0].type,
@@ -76,10 +83,12 @@ function TextMenu({ parentMenuRef }) {
   const layerSubMenuOuterRef = useRef();
   const layerSubMenuRef = useRef();
 
+  const headingsSubMenuOuterRef = useRef();
+  const headingsSubMenuRef = useRef();
+
   const { menuPosition, onCloseMenu } = useRightClickMenu();
 
   const layerSelectProps = useLayerSelect({
-    label: RIGHT_CLICK_MENU_LABELS.SELECT_LAYER,
     menuPosition,
     isMenuOpen: true,
   });
@@ -92,6 +101,21 @@ function TextMenu({ parentMenuRef }) {
     subMenuItems: layerSubMenuItems,
     ...layerSubMenuTriggerProps
   } = layerSelectProps || {};
+
+  const [isHeadingsSubMenuOpen, setIsHeadingSubMenuOpen] = useState(false);
+
+  // TODO: USE A *REAL* FUNCTION TO SET *AND SAVE* THE HEADING LEVEL
+  const [headingLevel, setHeadingLevel] = useState('auto');
+
+  // TODO: REPLACE WITH VALUES USED IN THE LEFT-HAND PANEL
+  //       -----------------------------------------------
+  const headingsSubMenuItems = [
+    { label: 'Automatic', tagName: 'p', key: 'auto' },
+    { label: 'Heading 1', tagName: 'h1' },
+    { label: 'Heading 2', tagName: 'h2' },
+    { label: 'Heading 3', tagName: 'h3' },
+    { label: 'Paragraph', tagName: 'p' },
+  ];
 
   return (
     <>
@@ -189,6 +213,57 @@ function TextMenu({ parentMenuRef }) {
       <LayerName />
       <LayerLock />
       <LayerUngroup />
+
+      <ContextMenuComponents.MenuSeparator />
+
+      <SubMenuOuterContainer ref={headingsSubMenuOuterRef}>
+        <ContextMenuComponents.SubMenuTrigger
+          label={RIGHT_CLICK_MENU_LABELS.TEXT_HEADING_LEVEL}
+          openSubMenu={() => setIsHeadingSubMenuOpen(true)}
+          closeSubMenu={() => setIsHeadingSubMenuOpen(false)}
+          isSubMenuOpen={isHeadingsSubMenuOpen}
+          parentMenuRef={parentMenuRef}
+          subMenuRef={headingsSubMenuRef}
+          SuffixIcon={isRTL ? ChevronLeftSmall : Icons.ChevronRightSmall}
+          title={`Heading Level - ${
+            headingsSubMenuItems.find((item) => {
+              return [item.key, item.tagName].includes(headingLevel);
+            }).label
+          }`}
+          style={{ width: '100%' }}
+        />
+        <SubMenuContainer
+          ref={headingsSubMenuRef}
+          className="submenu-container"
+          position={{
+            x:
+              (headingsSubMenuOuterRef?.current?.offsetWidth ||
+                DEFAULT_DISPLACEMENT) + 4,
+            y: -8,
+          }}
+        >
+          <ContextMenu
+            onDismiss={onCloseMenu}
+            isOpen={isHeadingsSubMenuOpen}
+            onCloseSubMenu={() => setIsHeadingSubMenuOpen(false)}
+            aria-label={RIGHT_CLICK_MENU_LABELS.TEXT_HEADING_LEVEL}
+            isSubMenu
+            parentMenuRef={parentMenuRef}
+          >
+            {headingsSubMenuItems.map(({ label, tagName, key }) => (
+              <ContextMenuComponents.MenuButton
+                key={key ?? tagName}
+                onClick={() => {
+                  // TODO: HANDLE HEADING LEVEL CHANGE HERE
+                  setHeadingLevel(key ?? tagName);
+                }}
+              >
+                {label}
+              </ContextMenuComponents.MenuButton>
+            ))}
+          </ContextMenu>
+        </SubMenuContainer>
+      </SubMenuOuterContainer>
 
       <ContextMenuComponents.MenuSeparator />
 
