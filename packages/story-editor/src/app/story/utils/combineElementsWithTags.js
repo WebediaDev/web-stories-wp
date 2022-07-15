@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Internal dependencies
- */
 
 /**
  * Takes all elements and all tags and combines
@@ -29,12 +26,12 @@
 export function combineElementsWithTags(textElements, tagNamesMap) {
   return textElements.map((element) => {
     // we only want to do this on elements that are text
-    if (element?.type === 'text') {
-      const newElement = { ...element };
-      newElement.tagName = tagNamesMap.get(element.id);
-      return newElement;
-    }
-    return element;
+    return element?.type === 'text'
+      ? {
+          ...element,
+          tagName: tagNamesMap.get(element.id),
+        }
+      : element;
   });
 }
 
