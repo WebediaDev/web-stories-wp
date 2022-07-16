@@ -23,6 +23,7 @@ import {
   Icons,
 } from '@googleforcreators/design-system';
 import { useRef, useState } from '@googleforcreators/react';
+import { useFeature } from 'flagged';
 import styled from 'styled-components';
 
 /**
@@ -63,6 +64,8 @@ const SubMenuOuterContainer = styled.div`
 `;
 
 function TextMenu({ parentMenuRef }) {
+  // Feature flagging for Semantic Headings
+  const showSemanticHeadings = useFeature('showSemanticHeadings');
   const { isRTL } = useConfig();
   const { copiedElementType, selectedElementType } = useStory(({ state }) => ({
     copiedElementType: state.copiedElementState.type,
@@ -216,56 +219,60 @@ function TextMenu({ parentMenuRef }) {
 
       <ContextMenuComponents.MenuSeparator />
 
-      <SubMenuOuterContainer ref={headingsSubMenuOuterRef}>
-        <ContextMenuComponents.SubMenuTrigger
-          label={RIGHT_CLICK_MENU_LABELS.TEXT_HEADING_LEVEL}
-          openSubMenu={() => setIsHeadingSubMenuOpen(true)}
-          closeSubMenu={() => setIsHeadingSubMenuOpen(false)}
-          isSubMenuOpen={isHeadingsSubMenuOpen}
-          parentMenuRef={parentMenuRef}
-          subMenuRef={headingsSubMenuRef}
-          SuffixIcon={isRTL ? ChevronLeftSmall : Icons.ChevronRightSmall}
-          title={`Heading Level - ${
-            headingsSubMenuItems.find((item) => {
-              return [item.key, item.tagName].includes(headingLevel);
-            }).label
-          }`}
-          style={{ width: '100%' }}
-        />
-        <SubMenuContainer
-          ref={headingsSubMenuRef}
-          className="submenu-container"
-          position={{
-            x:
-              (headingsSubMenuOuterRef?.current?.offsetWidth ||
-                DEFAULT_DISPLACEMENT) + 4,
-            y: -8,
-          }}
-        >
-          <ContextMenu
-            onDismiss={onCloseMenu}
-            isOpen={isHeadingsSubMenuOpen}
-            onCloseSubMenu={() => setIsHeadingSubMenuOpen(false)}
-            aria-label={RIGHT_CLICK_MENU_LABELS.TEXT_HEADING_LEVEL}
-            isSubMenu
-            parentMenuRef={parentMenuRef}
-          >
-            {headingsSubMenuItems.map(({ label, tagName, key }) => (
-              <ContextMenuComponents.MenuButton
-                key={key ?? tagName}
-                onClick={() => {
-                  // TODO: HANDLE HEADING LEVEL CHANGE HERE
-                  setHeadingLevel(key ?? tagName);
-                }}
+      {showSemanticHeadings && (
+        <>
+          <SubMenuOuterContainer ref={headingsSubMenuOuterRef}>
+            <ContextMenuComponents.SubMenuTrigger
+              label={RIGHT_CLICK_MENU_LABELS.TEXT_HEADING_LEVEL}
+              openSubMenu={() => setIsHeadingSubMenuOpen(true)}
+              closeSubMenu={() => setIsHeadingSubMenuOpen(false)}
+              isSubMenuOpen={isHeadingsSubMenuOpen}
+              parentMenuRef={parentMenuRef}
+              subMenuRef={headingsSubMenuRef}
+              SuffixIcon={isRTL ? ChevronLeftSmall : Icons.ChevronRightSmall}
+              title={`Heading Level - ${
+                headingsSubMenuItems.find((item) => {
+                  return [item.key, item.tagName].includes(headingLevel);
+                }).label
+              }`}
+              style={{ width: '100%' }}
+            />
+            <SubMenuContainer
+              ref={headingsSubMenuRef}
+              className="submenu-container"
+              position={{
+                x:
+                  (headingsSubMenuOuterRef?.current?.offsetWidth ||
+                    DEFAULT_DISPLACEMENT) + 4,
+                y: -8,
+              }}
+            >
+              <ContextMenu
+                onDismiss={onCloseMenu}
+                isOpen={isHeadingsSubMenuOpen}
+                onCloseSubMenu={() => setIsHeadingSubMenuOpen(false)}
+                aria-label={RIGHT_CLICK_MENU_LABELS.TEXT_HEADING_LEVEL}
+                isSubMenu
+                parentMenuRef={parentMenuRef}
               >
-                {label}
-              </ContextMenuComponents.MenuButton>
-            ))}
-          </ContextMenu>
-        </SubMenuContainer>
-      </SubMenuOuterContainer>
+                {headingsSubMenuItems.map(({ label, tagName, key }) => (
+                  <ContextMenuComponents.MenuButton
+                    key={key ?? tagName}
+                    onClick={() => {
+                      // TODO: HANDLE HEADING LEVEL CHANGE HERE
+                      setHeadingLevel(key ?? tagName);
+                    }}
+                  >
+                    {label}
+                  </ContextMenuComponents.MenuButton>
+                ))}
+              </ContextMenu>
+            </SubMenuContainer>
+          </SubMenuOuterContainer>
 
-      <ContextMenuComponents.MenuSeparator />
+          <ContextMenuComponents.MenuSeparator />
+        </>
+      )}
 
       <ContextMenuComponents.MenuButton onClick={handleCopyStyles}>
         {RIGHT_CLICK_MENU_LABELS.COPY_STYLES}
