@@ -57,7 +57,8 @@ export default function useContextValueProvider(reducerState, reducerActions) {
     fetchMediaSuccess,
     fetchMediaError,
     resetFilters,
-    prependMedia,
+    addUpload,
+    removeUpload,
     setMediaType,
     setSearchTerm,
     setNextPage,
@@ -146,7 +147,8 @@ export default function useContextValueProvider(reducerState, reducerActions) {
     canTranscodeResource,
   } = useUploadMedia({
     media,
-    prependMedia,
+    addUpload,
+    removeUpload,
     updateMediaElement,
     deleteMediaElement,
   });

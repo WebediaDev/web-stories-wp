@@ -13,18 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Internal dependencies
- */
-import { INITIAL_STATE as COMMON_INITIAL_STATE } from '../pagination/constants';
-
-export const INITIAL_STATE = {
-  ...COMMON_INITIAL_STATE,
-  processing: [],
-  audioProcessing: [],
-  audioProcessed: [],
-  posterProcessing: [],
-  posterProcessed: [],
-  mediaType: '',
-  searchTerm: '',
-};
+function addUpload(state, { media }) {
+  return {
+    ...state,
+    processing: [...media, ...state.processing],
+    media: [...media, ...state.media],
+  };
+}
+export default addUpload;

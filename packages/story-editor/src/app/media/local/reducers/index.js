@@ -24,3 +24,5 @@ export { default as addPosterProcessing } from './addPosterProcessing';
 export { default as removePosterProcessing } from './removePosterProcessing';
 export { default as addAudioProcessing } from './addAudioProcessing';
 export { default as removeAudioProcessing } from './removeAudioProcessing';
+export { default as addUpload } from './addUpload';
+export { default as removeUpload } from './removeUpload';

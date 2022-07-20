@@ -65,6 +65,14 @@ function reducer(state = INITIAL_STATE, { type, payload }) {
       return reducers.prependMedia(state, payload);
     }
 
+    case types.LOCAL_MEDIA_REMOVE_MEDIA: {
+      return reducers.removeUpload(state, payload);
+    }
+
+    case types.LOCAL_MEDIA_ADD_MEDIA: {
+      return reducers.addUpload(state, payload);
+    }
+
     case types.LOCAL_MEDIA_ADD_POSTER_PROCESSING: {
       return reducers.addPosterProcessing(state, payload);
     }

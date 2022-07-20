@@ -41,14 +41,16 @@ const storageKey = LOCAL_STORAGE_PREFIX.VIDEO_OPTIMIZATION_DIALOG_DISMISSED;
  *
  * @param {Object} props Props.
  * @param {Array<Object<*>>} props.media Media items.
- * @param {Function} props.prependMedia Action to add new media items.
+ * @param {Function} props.addUpload Action to add new media items.
  * @param {Function} props.updateMediaElement Action to update a media item.
  * @param {Function} props.deleteMediaElement Action to delete a media item.
+ * @param {Function} props.removeUpload Action to remove media items.
  * @return {{uploadMedia: Function, isUploading: boolean}} Upload status, and function to upload media.
  */
 function useUploadMedia({
   media,
-  prependMedia,
+  addUpload,
+  removeUpload,
   updateMediaElement,
   deleteMediaElement,
 }) {
@@ -122,11 +124,10 @@ function useUploadMedia({
     }
 
     const resourcesToAdd = newItems.map(({ resource }) => resource);
-
-    prependMedia({
+    addUpload({
       media: resourcesToAdd,
     });
-  }, [pending, prependMedia]);
+  }, [pending, addUpload]);
 
   // Update *existing* items in the media library and on canvas.
   useEffect(() => {
@@ -189,15 +190,22 @@ function useUploadMedia({
   // and no further action is required.
   // It is safe to remove them from the queue now.
   useEffect(() => {
-    for (const { id } of finished) {
+    for (const { id, previousResourceId } of finished) {
       removeItem({ id });
+      removeUpload({ id: previousResourceId });
     }
-  }, [finished, removeItem]);
+  }, [removeUpload, finished, removeItem]);
 
   // Handle *failed* items.
   // Remove resources from media library and canvas.
   useEffect(() => {
-    for (const { id: itemId, onUploadError, error, resource } of failures) {
+    for (const {
+      id: itemId,
+      onUploadError,
+      error,
+      resource,
+      previousResourceId,
+    } of failures) {
       const { id: resourceId } = resource;
 
       if (onUploadError) {
@@ -206,6 +214,7 @@ function useUploadMedia({
 
       deleteMediaElement({ id: resourceId });
       removeItem({ id: itemId });
+      removeUpload({ id: previousResourceId });
 
       const thumbnailSrc =
         resource && ['video', 'gif'].includes(resource.type)
@@ -226,7 +235,7 @@ function useUploadMedia({
         dismissible: true,
       });
     }
-  }, [failures, deleteMediaElement, removeItem, showSnackbar]);
+  }, [failures, deleteMediaElement, removeItem, showSnackbar, removeUpload]);
 
   const uploadMedia = useCallback(
     /**

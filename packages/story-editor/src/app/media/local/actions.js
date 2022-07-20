@@ -126,3 +126,21 @@ export const prependMedia =
       payload: { media },
     });
   };
+
+export const addUpload =
+  (dispatch) =>
+  ({ media }) => {
+    dispatch({
+      type: types.LOCAL_MEDIA_ADD_MEDIA,
+      payload: { media },
+    });
+  };
+
+export const removeUpload =
+  (dispatch) =>
+  ({ id }) => {
+    dispatch({
+      type: types.LOCAL_MEDIA_REMOVE_MEDIA,
+      payload: { id },
+    });
+  };

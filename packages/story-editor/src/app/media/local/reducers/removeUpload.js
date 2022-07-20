@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * Internal dependencies
- */
-import { INITIAL_STATE as COMMON_INITIAL_STATE } from '../pagination/constants';
+function removeUpload(state, { id }) {
+  if (!id) {
+    return state;
+  }
+  const currentProcessing = [...state.processing];
+  const processing = currentProcessing.filter(
+    ({ id: itemId }) => itemId !== id
+  );
 
-export const INITIAL_STATE = {
-  ...COMMON_INITIAL_STATE,
-  processing: [],
-  audioProcessing: [],
-  audioProcessed: [],
-  posterProcessing: [],
-  posterProcessed: [],
-  mediaType: '',
-  searchTerm: '',
-};
+  return {
+    ...state,
+    processing,
+  };
+}
+export default removeUpload;

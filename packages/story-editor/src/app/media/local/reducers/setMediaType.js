@@ -17,15 +17,22 @@
  * Internal dependencies
  */
 import { INITIAL_STATE } from '../constants';
+import { LOCAL_MEDIA_TYPE_ALL } from '../types';
 
 function setMediaType(state, { mediaType }) {
   if (mediaType === state.mediaType) {
     return state;
   }
+  const media =
+    mediaType && mediaType !== LOCAL_MEDIA_TYPE_ALL
+      ? state.processing.filter(({ type }) => type === mediaType)
+      : [...state.processing];
+
   return {
     ...INITIAL_STATE,
-    media: state.media.filter(({ local }) => local), // This filter allows remove temporary file returned on upload
+    media,
     audioProcessing: [...state.audioProcessing],
+    processing: [...state.processing],
     audioProcessed: [...state.audioProcessed],
     posterProcessing: [...state.posterProcessing],
     posterProcessed: [...state.posterProcessed],
