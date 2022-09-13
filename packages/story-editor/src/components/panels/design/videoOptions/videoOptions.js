@@ -29,6 +29,7 @@ import {
   BUTTON_TYPES,
   BUTTON_VARIANTS,
   useLiveRegion,
+  Slider,
 } from '@googleforcreators/design-system';
 import { useEffect } from '@googleforcreators/react';
 
@@ -63,6 +64,10 @@ const Spinner = styled.div`
   margin-top: 4px;
 `;
 
+const StyledSlider = styled(Slider)`
+  width: 100%;
+`;
+
 const HelperText = styled(Text).attrs({
   size: THEME_CONSTANTS.TYPOGRAPHY.PRESET_SIZES.X_SMALL,
 })`
@@ -73,12 +78,18 @@ function VideoOptionsPanel({ selectedElements, pushUpdate }) {
   const resource = getCommonValue(selectedElements, 'resource');
   const elementId = getCommonValue(selectedElements, 'id');
   const loop = getCommonValue(selectedElements, 'loop');
+  const segmentLength = getCommonValue(selectedElements, 'segmentLength', 20);
   const isSingleElement = selectedElements.length === 1;
 
   const {
     state: { canTrim, canMute, isTrimming, isMuting, isDisabled },
     actions: { handleMute, handleTrim },
   } = useVideoElementTranscoding({ resource, elementId, isSingleElement });
+
+  const onChangeSegmentLength = (value) => {
+    const newSegmentLength = value;
+    pushUpdate({ segmentLength: newSegmentLength }, true);
+  };
 
   const muteButtonText = isMuting
     ? __('Removing audio…', 'web-stories')
@@ -87,6 +98,14 @@ function VideoOptionsPanel({ selectedElements, pushUpdate }) {
   const trimButtonText = isTrimming
     ? __('Trimming…', 'web-stories')
     : __('Trim', 'web-stories');
+
+  const segmentButtonText = isMuting
+    ? __('Segmenting…', 'web-stories')
+    : __('Segment', 'web-stories');
+
+  const handleSegmentation = () => {
+    // console.log("segmentLength:", segmentLength);
+  };
 
   const speak = useLiveRegion();
 
@@ -113,52 +132,87 @@ function VideoOptionsPanel({ selectedElements, pushUpdate }) {
   };
 
   return (
-    <SimplePanel
-      name="videoOptions"
-      title={__('Video Settings', 'web-stories')}
-    >
-      <Row spaceBetween={false}>
-        <LoopPanelContent loop={loop} onChange={onChange} />
-        {canTrim && (
-          <TrimWrapper>
-            <TrimButton
-              disabled={isDisabled}
-              variant={BUTTON_VARIANTS.RECTANGLE}
-              type={BUTTON_TYPES.SECONDARY}
-              size={BUTTON_SIZES.SMALL}
-              onClick={handleTrim}
-            >
-              {trimButtonText}
-            </TrimButton>
-            {isTrimming && <Processing />}
-          </TrimWrapper>
+    <>
+      <SimplePanel
+        name="videoOptions"
+        title={__('Video Settings', 'web-stories')}
+      >
+        <Row spaceBetween={false}>
+          <LoopPanelContent loop={loop} onChange={onChange} />
+          {canTrim && (
+            <TrimWrapper>
+              <TrimButton
+                disabled={isDisabled}
+                variant={BUTTON_VARIANTS.RECTANGLE}
+                type={BUTTON_TYPES.SECONDARY}
+                size={BUTTON_SIZES.SMALL}
+                onClick={handleTrim}
+              >
+                {trimButtonText}
+              </TrimButton>
+              {isTrimming && <Processing />}
+            </TrimWrapper>
+          )}
+        </Row>
+        {canMute && (
+          <>
+            <Row spaceBetween={false}>
+              <StyledButton
+                disabled={isDisabled}
+                variant={BUTTON_VARIANTS.RECTANGLE}
+                type={BUTTON_TYPES.SECONDARY}
+                size={BUTTON_SIZES.SMALL}
+                onClick={handleMute}
+              >
+                {muteButtonText}
+              </StyledButton>
+              {isMuting && <Processing />}
+            </Row>
+            <Row>
+              <HelperText>
+                {__(
+                  'Removing the audio from this video will upload a new muted version of it to the media library. This might take a couple of seconds.',
+                  'web-stories'
+                )}
+              </HelperText>
+            </Row>
+          </>
         )}
-      </Row>
-      {canMute && (
-        <>
-          <Row spaceBetween={false}>
-            <StyledButton
-              disabled={isDisabled}
-              variant={BUTTON_VARIANTS.RECTANGLE}
-              type={BUTTON_TYPES.SECONDARY}
-              size={BUTTON_SIZES.SMALL}
-              onClick={handleMute}
-            >
-              {muteButtonText}
-            </StyledButton>
-            {isMuting && <Processing />}
-          </Row>
-          <Row>
-            <HelperText>
-              {__(
-                'Removing the audio from this video will upload a new muted version of it to the media library. This might take a couple of seconds.',
-                'web-stories'
-              )}
-            </HelperText>
-          </Row>
-        </>
-      )}
-    </SimplePanel>
+      </SimplePanel>
+      <SimplePanel
+        name="videoOptions"
+        title={__('Video Segment Settings', 'web-stories')}
+      >
+        <Row spaceBetween>
+          <StyledSlider
+            value={segmentLength}
+            handleChange={onChangeSegmentLength}
+            minorStep={1}
+            min={20}
+            max={120}
+            aria-label={__('Segment length', 'web-stories')}
+          />
+          {segmentLength} {__('sec', 'web-stories')}
+          <StyledButton
+            disabled={isDisabled}
+            variant={BUTTON_VARIANTS.RECTANGLE}
+            type={BUTTON_TYPES.SECONDARY}
+            size={BUTTON_SIZES.SMALL}
+            onClick={handleSegmentation}
+          >
+            {segmentButtonText}
+          </StyledButton>
+        </Row>
+        <Row>
+          <HelperText>
+            {__(
+              'Segmenting your video will split the video across multiple pages',
+              'web-stories'
+            )}
+          </HelperText>
+        </Row>
+      </SimplePanel>
+    </>
   );
 }
 
