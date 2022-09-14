@@ -283,6 +283,68 @@ function useFFmpeg() {
   );
 
   /**
+   * Segment a video using FFmpeg.
+   *
+   * @param {File} file Original video file object.
+   * @return {Promise<File>} Segmented video files .
+   */
+  const segmentVideo = useCallback(
+    async (file, segmentTime) => {
+      let ffmpeg;
+
+      try {
+        ffmpeg = await getFFmpegInstance(file);
+        const type = file?.type || MEDIA_TRANSCODED_MIME_TYPE;
+        const ext = getExtensionFromMimeType(type);
+        const outputFileName = getFileBasename(file) + '_%03d.' + ext;
+        await ffmpeg.run(
+          '-i',
+          file.name,
+          '-c',
+          'copy',
+          '-f',
+          'segment',
+          '-segment_time',
+          `${segmentTime}`,
+          '-reset_timestamps',
+          '1',
+          outputFileName
+        );
+
+        const files = [];
+
+        await ffmpeg
+          .FS('readdir', '/')
+          .filter(
+            (outputFile) =>
+              outputFile !== file.name && outputFile.endsWith(`.${ext}`)
+          )
+          .forEach(async (outputFile) => {
+            const data = await ffmpeg.FS('readFile', outputFile);
+            files.push(
+              blobToFile(new Blob([data.buffer], { type }), outputFile, type)
+            );
+          });
+
+        return files;
+      } catch (err) {
+        // eslint-disable-next-line no-console -- We want to surface this error.
+        console.error(err);
+        throw err;
+      } finally {
+        try {
+          ffmpeg.exit();
+        } catch {
+          // Not interested in errors here.
+        }
+      }
+    },
+    [getFFmpegInstance]
+  );
+
+  //
+
+  /**
    * Trim Video using FFmpeg.
    *
    * @param {File} file Original video file object.
@@ -551,6 +613,7 @@ function useFFmpeg() {
       convertGifToVideo,
       convertToMp3,
       trimVideo,
+      segmentVideo,
     }),
     [
       isTranscodingEnabled,
@@ -561,6 +624,7 @@ function useFFmpeg() {
       convertGifToVideo,
       convertToMp3,
       trimVideo,
+      segmentVideo,
     ]
   );
 }
