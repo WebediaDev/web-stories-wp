@@ -17,12 +17,12 @@
 
 namespace Google\Web_Stories\Tests\Integration\Media\Video;
 
-use Google\Web_Stories\Tests\Integration\TestCase;
+use Google\Web_Stories\Tests\Integration\DependencyInjectedTestCase;
 
 /**
  * @coversDefaultClass \Google\Web_Stories\Media\Video\Optimization
  */
-class Optimization extends TestCase {
+class Optimization extends DependencyInjectedTestCase {
 	/**
 	 * Test instance.
 	 *
@@ -33,7 +33,7 @@ class Optimization extends TestCase {
 	public function set_up(): void {
 		parent::set_up();
 
-		$this->instance = new \Google\Web_Stories\Media\Video\Optimization();
+		$this->instance = $this->injector->make( \Google\Web_Stories\Media\Video\Optimization::class );
 	}
 
 	/**
@@ -43,5 +43,6 @@ class Optimization extends TestCase {
 		$this->instance->register();
 
 		$this->assertTrue( registered_meta_key_exists( 'post', $this->instance::OPTIMIZED_ID_POST_META_KEY, 'attachment' ) );
+		$this->assertSame( 10, has_action( 'delete_attachment', [ $this->instance, 'delete_video' ] ) );
 	}
 }

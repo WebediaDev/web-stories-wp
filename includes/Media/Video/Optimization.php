@@ -40,12 +40,34 @@ class Optimization extends Service_Base implements HasMeta {
 	public const OPTIMIZED_ID_POST_META_KEY = 'web_stories_optimized_id';
 
 	/**
+	 * Utils instance.
+	 *
+	 * @since 1.26.0
+	 *
+	 * @var Utils instance.
+	 */
+	private $utils;
+
+	/**
+	 * Optimization constructor.
+	 *
+	 * @since 1.26.0
+	 *
+	 * @param Utils $utils Utils instance.
+	 * @return void
+	 */
+	public function __construct( Utils $utils ) {
+		$this->utils = $utils;
+	}
+
+	/**
 	 * Init.
 	 *
 	 * @since 1.10.0
 	 */
 	public function register(): void {
 		$this->register_meta();
+		add_action( 'delete_attachment', [ $this, 'delete_video' ] );
 	}
 
 	/**
@@ -67,5 +89,17 @@ class Optimization extends Service_Base implements HasMeta {
 				'object_subtype'    => 'attachment',
 			]
 		);
+	}
+
+
+	/**
+	 * Deletes associated meta data when a video is deleted.
+	 *
+	 * @since 1.26.0
+	 *
+	 * @param int $attachment_id ID of the attachment to be deleted.
+	 */
+	public function delete_video( int $attachment_id ): void {
+		$this->utils->remove_link( $attachment_id, self::OPTIMIZED_ID_POST_META_KEY );
 	}
 }

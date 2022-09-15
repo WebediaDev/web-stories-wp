@@ -43,6 +43,7 @@ class Muting extends DependencyInjectedTestCase {
 		$this->instance->register();
 
 		$this->assertSame( 10, has_action( 'rest_api_init', [ $this->instance, 'rest_api_init' ] ) );
+		$this->assertSame( 10, has_action( 'delete_attachment', [ $this->instance, 'delete_video' ] ) );
 		$this->assertSame(
 			10,
 			has_filter(

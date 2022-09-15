@@ -52,6 +52,27 @@ class Muting extends Service_Base implements HasMeta {
 	public const IS_MUTED_REST_API_KEY = 'web_stories_is_muted';
 
 	/**
+	 * Utils instance.
+	 *
+	 * @since 1.26.0
+	 *
+	 * @var Utils instance.
+	 */
+	private $utils;
+
+	/**
+	 * Optimization constructor.
+	 *
+	 * @since 1.26.0
+	 *
+	 * @param Utils $utils Utils instance.
+	 * @return void
+	 */
+	public function __construct( Utils $utils ) {
+		$this->utils = $utils;
+	}
+
+	/**
 	 * Register.
 	 *
 	 * @since 1.10.0
@@ -61,6 +82,7 @@ class Muting extends Service_Base implements HasMeta {
 
 		add_action( 'rest_api_init', [ $this, 'rest_api_init' ] );
 		add_filter( 'wp_prepare_attachment_for_js', [ $this, 'wp_prepare_attachment_for_js' ] );
+		add_action( 'delete_attachment', [ $this, 'delete_video' ] );
 	}
 
 	/**
@@ -198,5 +220,16 @@ class Muting extends Service_Base implements HasMeta {
 		update_post_meta( $object_id, $meta_key, $value );
 
 		return true;
+	}
+
+	/**
+	 * Deletes associated meta data when a video is deleted.
+	 *
+	 * @since 1.26.0
+	 *
+	 * @param int $attachment_id ID of the attachment to be deleted.
+	 */
+	public function delete_video( int $attachment_id ): void {
+		$this->utils->remove_link( $attachment_id, self::MUTED_ID_POST_META_KEY );
 	}
 }

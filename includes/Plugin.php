@@ -185,6 +185,7 @@ class Plugin extends ServiceBasedPlugin {
 			Settings::class,
 			Stories_Script_Data::class,
 			User\Preferences::class,
+			Media\Video\Utils::class,
 		];
 	}
 
